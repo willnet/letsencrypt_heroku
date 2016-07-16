@@ -34,7 +34,7 @@ module LetsencryptHeroku
           @challenge = @client.authorize(domain: domain).http01
 
           command = "heroku config:set LETSENCRYPT_RESPONSE=#{@challenge.file_content}"
-          output = `#{command}`
+          output = Bundler.with_clean_env { `#{command}` }
           $?.success? or fail_task(output)
 
           test_response(domain: domain, challenge: @challenge)
@@ -54,7 +54,7 @@ module LetsencryptHeroku
         File.write('fullchain.pem', certificate.fullchain_to_pem)
 
         command = "heroku _certs:update fullchain.pem privkey.pem --confirm #{config.herokuapp}"
-        output = `#{command}`
+        output = Bundler.with_clean_env { `#{command}` }
         $?.success? or fail_task(output)
 
         FileUtils.rm %w(privkey.pem fullchain.pem)
