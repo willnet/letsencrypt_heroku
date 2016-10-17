@@ -27,11 +27,13 @@ module LetsencryptHeroku
 
     def execute(command)
       log command
-      Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-        out, err = stdout.read, stderr.read
-        log out
-        log err
-        wait_thr.value.success? or error(err.force_encoding('utf-8').sub(' ▸    ', 'heroku: '))
+      Bundler.with_clean_env do
+        Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+          out, err = stdout.read, stderr.read
+          log out
+          log err
+          wait_thr.value.success? or error(err.force_encoding('utf-8').sub(' ▸    ', 'heroku: '))
+        end
       end
     end
 

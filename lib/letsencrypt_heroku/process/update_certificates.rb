@@ -10,7 +10,7 @@ class LetsencryptHeroku::Process
         certificate = context.client.new_certificate(csr)
         File.write('privkey.pem', certificate.request.private_key.to_pem)
         File.write('fullchain.pem', certificate.fullchain_to_pem)
-
+        # FIXME: something weired
         if has_already_cert(herokuapp)
           execute "heroku certs:update fullchain.pem privkey.pem --confirm #{herokuapp} --app #{herokuapp}"
         else
